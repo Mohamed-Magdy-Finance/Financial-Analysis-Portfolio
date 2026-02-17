@@ -1,4 +1,7 @@
 # Automated Financial Accounting System
+
+![Dashboard](Home-Padge.png)
+
 **Tools Used:** Microsoft Excel (Advanced Formulas, Dynamic Charts, Data Integration)
 
 ## Description:
