@@ -33,4 +33,5 @@ The system bridges the gap between financial planning and actual results. By str
 ## How to Navigate
 1. **Build Forecast:** Start by setting your monthly projections in the forecasting tab.
 2. **Record Actuals:** Update your actual expenses as they occur during the month.
+
 3. **Review Reports:** Check the Income Statement tab for the final financial summary and net profit analysis.
