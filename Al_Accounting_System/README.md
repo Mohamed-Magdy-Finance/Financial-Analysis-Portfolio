@@ -6,17 +6,17 @@ This project is a comprehensive Excel-based system designed to automate the full
 
 ### 1. Visual Workflow & Cycle Navigation
 <p align="center">
-  <img src="./Home%20Padge.png" alt="Home Page" width="800">
+  <img src="./Home%20Padge.png" alt="Home Page">
 </p>
 
 ### 2. Financial Reporting (Income Statement)
 <p align="center">
-  <img src="./Income%20Statement.png" alt="Income Statement" width="800">
+  <img src="./Income%20Statement.png" alt="Income Statement">
 </p>
 
 ### 3. Financial Position (Balance Sheet)
 <p align="center">
-  <img src="./Balance%20Sheet.png" alt="Balance Sheet" width="800">
+  <img src="./Balance%20Sheet.png" alt="Balance Sheet">
 </p>
 
 ---
