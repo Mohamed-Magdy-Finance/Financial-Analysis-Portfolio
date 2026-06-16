@@ -5,19 +5,19 @@ This project features a professional financial model developed in Excel, designe
 ---
 
 ### Headcount & Payroll Tracking
-![Headcount Report](./assets/1.png)
+![Headcount Report](1.png)
 
 ### Baseline Bonus Projections (100% Attainment)
-![Accrual At 100% Attainment](./assets/4.png)
+![Accrual At 100% Attainment](4.png)
 
 ### Finalized Actuals & Bonus Accruals
-![Actual Table & Accrual](./assets/2.png)
+![Actual Table & Accrual](2.png)
 
 ### Pre-Close Verification & Accounting Analysis
-![Accounting Analysis](./assets/3.png)
+![Accounting Analysis](3.png)
 
 ### Post-Close Executive Business Insights
-![Business Analysis](./assets/5.png)
+![Business Analysis](5.png)
 
 ---
 
@@ -36,12 +36,6 @@ The model serves as a strategic and technical tool for financial monitoring. It 
 3. Use the **Accounting Analysis** tab for verification, audit-readiness, and variance checks before closing the ledger.
 4. Use the **Business Analysis** tab for strategic insights, narratives, and executive reporting post-close.
 
----
-
-## ✍️ Author
-* MBA Candidate | Oracle ERP Practitioner | Financial Systems Analyst
-* 🌐 [LinkedIn Profile](https://linkedin.com/in/YOUR_LINKEDIN_USERNAME)
-* 💻 [GitHub Portfolio](https://github.com/YOUR_USERNAME)
 
 ---
 *Developed with a commitment to corporate governance, financial precision, and advanced data architecture.*
