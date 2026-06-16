@@ -1,41 +1,37 @@
-# Financial Compensation Variance Analysis & Accruals Model
+# Financial Budgeting & Forecasting Model
 
-This project features a professional financial model developed in Excel, designed to manage corporate compensation costs, headcount tracking, and automated bonus accruals, providing rigorous financial control and strategic insights.
+This project features a professional financial model developed in Excel, designed to provide a clear comparison between budgeted targets and actual performance, alongside dynamic forecasting capabilities.
 
 ---
 
-### Headcount & Payroll Tracking
-![Headcount Report](1.png)
+### 📊 Financial Dashboard
+![Financial Dashboard](2.png)
 
-### Baseline Bonus Projections (100% Attainment)
-![Accrual At 100% Attainment](4.png)
+### 📈 Budget vs. Actual Variance Analysis
+![Variance Table](1.png)
 
-### Finalized Actuals & Bonus Accruals
-![Actual Table & Accrual](2.png)
+### 📋 Monthly Review & Data Tracking
+![Monthly Review Log](3.png)
 
-### Pre-Close Verification & Accounting Analysis
-![Accounting Analysis](3.png)
-
-### Post-Close Executive Business Insights
-![Business Analysis](5.png)
+### 🔍 Year-to-Date (YTD) Performance Analysis
+![YTD Analysis](4.png)
 
 ---
 
 ## Project Description
-The model serves as a strategic and technical tool for financial monitoring. It provides financial control for accounting teams before period-close (to pinpoint errors and verify accruals) and delivers commercial analysis for executive management after period-close to evaluate budget compliance against headcount changes.
+The model serves as a strategic tool for financial monitoring. It includes a comprehensive income statement, expense tracking across multiple corporate categories, and automated variance analysis ($Abs$ and $\%$). It is built to handle dynamic data entries and translate them into visual insights for better executive decision-making.
 
 ## Key Components
-* **Headcount Reporting:** Full visibility into employee roster, salaries, and precise hire dates to align HR records with payroll.
-* **Automated Bonus Accruals:** Dynamic scheduling that transitions from baseline projections to actual performance attainment adjustments (e.g., 92% attainment).
-* **Month-over-Month (MoM) Variance Analysis:** Automated financial control checking fluctuations in Salaries, Taxes, and Insurance with data-check comments.
-* **Dual-Audience Reporting:** Separate modules tailored for technical accounting verification and strategic executive presentation.
+* **Budget vs. Actual Analysis:** Real-time tracking of income and expenses to instantly identify financial gaps and overruns.
+* **Monthly Data Entry Architecture:** Organized structure for recording transactions cleanly by category and description.
+* **Automated Visuals:** Dynamic charts and summary tables that update automatically based on any data input.
+* **Fiscal Projections:** Financial forecasting tools to help plan, allocate resources, and forecast upcoming fiscal periods.
 
 ## How to Navigate the File
-1. Use the **Headcount Report** tab to manage employee salaries and hiring timelines.
-2. Refer to the **Bonus Accrual Schedule** tab to set attainment factors and calculate year-end provisions.
-3. Use the **Accounting Analysis** tab for verification, audit-readiness, and variance checks before closing the ledger.
-4. Use the **Business Analysis** tab for strategic insights, narratives, and executive reporting post-close.
+1. Use the **Actual** tab for daily or monthly transaction entries.
+2. Refer to the **Budget** tab to set and lock your financial targets.
+3. Use the **Dashboard Finished** tab for the final visual analysis, trends, and summary reports.
 
 
 ---
-*Developed with a commitment to corporate governance, financial precision, and advanced data architecture.*
+*Maintained with a focus on financial precision, automated control, and data integrity.*
