@@ -204,10 +204,6 @@ graph TD
 
 ---
 
-## 📄 License
-Licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License**.
-
----
 
 <p align="center">
   © 2026 Mohamed Magdy. All rights reserved.
