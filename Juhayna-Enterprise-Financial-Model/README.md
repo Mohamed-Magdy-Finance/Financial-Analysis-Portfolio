@@ -15,8 +15,25 @@
 - [Key Statistics](#-key-statistics)
 - [Enterprise Design Principles](#-enterprise-design-principles)
 - [Key Features](#-key-features)
+  - [Executive Dashboard](#-executive-dashboard)
+  - [3-Statement Financials](#-3-statement-financials)
+  - [KPI Engine & Reporting Layer](#-kpi-engine--reporting-layer)
+  - [Scenario & Sensitivity Analysis](#-scenario--sensitivity-analysis)
+  - [Enterprise Governance](#-enterprise-governance)
+  - [Power BI Integration](#-power-bi-integration)
+  - [Market Data Hub](#-market-data-hub)
 - [Model Architecture & Workflow](#-model-architecture--workflow)
 - [Screenshots](#-screenshots)
+  - [1. Professional Cover Page](#1-professional-cover-page)
+  - [2. Executive Dashboard](#2-executive-dashboard)
+  - [3. KPI Engine](#3-kpi-engine)
+  - [4. Reporting Layer (Single Source of Truth)](#4-reporting-layer-single-source-of-truth)
+  - [5. Scenario Manager](#5-scenario-manager)
+  - [6. Sensitivity Analysis](#6-sensitivity-analysis)
+  - [7. Market Data Hub](#7-market-data-hub)
+  - [8. Control Panel](#8-control-panel)
+  - [9. Model Architecture (Dependency Map)](#9-model-architecture-dependency-map)
+  - [10. Audit Trail](#10-audit-trail)
 - [Getting Started](#-getting-started)
 - [Repository Structure](#-repository-structure)
 - [Skills Demonstrated](#-skills-demonstrated)
@@ -31,7 +48,7 @@
 
 This repository contains a comprehensive financial model for **Juhayna Food Industries (EGX: JUFO)**, developed entirely in Microsoft Excel. The model provides a complete platform for financial planning, analysis, valuation, and scenario planning.
 
-Built using **industry-standard enterprise FP&A and financial modeling best practices**, the model features a clean 5‑layer architecture, a **Single Source of Truth (SSoT)** reporting layer, and over **70 automated validation checks** to ensure data integrity and auditability. It is designed to be fully transparent, scalable, and ready for Power BI integration.
+Built using **industry-standard enterprise FP&A and financial modeling best practices**, the model features a clean 5‑layer architecture, a **Single Source of Truth (SSoT)** reporting layer, and over **70 automated validation checks** to ensure data integrity and auditability.
 
 ---
 
@@ -70,47 +87,35 @@ This model is built on a set of core design principles that reflect enterprise-g
 ## ✨ Key Features
 
 ### 🚀 Executive Dashboard
-- Interactive dashboard with dynamic KPIs, charts, and a model health indicator.
-- Year (2022–2026), Scenario, and Currency (EGP/USD) selectors for real‑time analysis.
-- 5‑year trend visualization with sparklines and YoY variance indicators.
+
+Interactive dashboard with dynamic KPIs, charts, and a model health indicator. Features Year (2022–2026), Scenario, and Currency (EGP/USD) selectors for real‑time analysis with 5‑year trend visualization.
 
 ### 📈 3‑Statement Financials
-- Fully integrated **Income Statement, Balance Sheet, and Cash Flow** statements.
-- Historical (2016–2024) + Forecast (2025–2026) periods.
-- Automated cross‑sheet reconciliations: **Balance Check, Cash Tie, Net Income Tie** (tolerance < 0.05).
+
+Fully integrated **Income Statement, Balance Sheet, and Cash Flow** statements with Historical (2016–2024) + Forecast (2025–2026) periods. Automated cross‑sheet reconciliations: **Balance Check, Cash Tie, Net Income Tie** (tolerance < 0.05).
 
 ### ⚙️ KPI Engine & Reporting Layer
-- Centralized calculation engine with 49+ KPIs for consistency and auditability.
-- **Single Source of Truth (SSoT)** layer with full data lineage columns:
-  - `Source Sheet`
-  - `Source Cell`
-  - `Lineage Path`
-- Ensures all downstream outputs (Dashboard, Charts, Sensitivity) read from the SSoT.
+
+Centralized calculation engine with 49+ KPIs for consistency and auditability. The **Single Source of Truth (SSoT)** layer includes full data lineage columns: `Source Sheet`, `Source Cell`, and `Lineage Path` — ensuring all downstream outputs read from the SSoT.
 
 ### 🎯 Scenario & Sensitivity Analysis
-- 5 pre‑built scenarios (Base, Optimistic, Conservative, Stress, Custom) with custom overrides.
-- Advanced sensitivity toolkit:
-  - **Tornado Analysis** – 7 assumptions flexed ±10%.
-  - **One‑Way Sensitivity** – Revenue growth → Net Income waterfall.
-  - **Two‑Way Sensitivity** – Revenue growth × EBITDA margin heat map.
-  - **Break‑even Analysis** – Revenue required for NI = 0 with margin of safety.
-- Dynamic Scenario Manager with side‑by‑side scenario comparison.
+
+5 pre‑built scenarios (Base, Optimistic, Conservative, Stress, Custom) with custom overrides. Advanced sensitivity toolkit includes **Tornado Analysis**, **One‑Way Sensitivity**, **Two‑Way Sensitivity Heat Map**, and **Break‑even Analysis** with margin of safety.
 
 ### 🛡️ Enterprise Governance
-- **Control Panel** – 70+ automated integrity checks with 5‑tier severity (Critical/High/Medium/Low/Information).
-- **Audit Trail** – Full change log with date, user, sheet, cell, old/new values, change type, reason, and approver.
-- **Formula Governance** – Exception ledger tracking all formula deviations (32 entries, 0 Critical/High).
-- **Model Registry** – Catalog of 370+ named ranges with metadata (type, source, description, used by, owner, criticality).
 
-### 📦 Power BI Integration Ready
-- Dedicated flat‑table export sheet: `📊 Power BI Export`.
-- Native Excel table `tbl_PBI_Export` with 16 KPIs and 5‑year history.
-- Clean, numeric‑only structure (DQ‑05 check ensures zero text in export).
+- **Control Panel** – 70+ automated integrity checks with 5‑tier severity.
+- **Audit Trail** – Full change log with approval workflow.
+- **Formula Governance** – Exception ledger (32 entries, 0 Critical/High).
+- **Model Registry** – Catalog of 370+ named ranges with metadata.
+
+### 📦 Power BI Integration
+
+Dedicated flat‑table export (`tbl_PBI_Export`) with 16 KPIs and 5‑year history. Clean, numeric‑only structure (DQ‑05 check ensures zero text in export).
 
 ### 📡 Market Data Hub
-- Dual‑mode operation: **LIVE** (via S&P Capital IQ add‑in) or **MANUAL** (user overrides).
-- Data validation, quality scoring, and status monitoring.
-- Falls back gracefully to manual values when the LIVE feed is unavailable.
+
+Dual‑mode operation: **LIVE** (via S&P Capital IQ) or **MANUAL** (user overrides). Features data validation, quality scoring, and graceful fallback to manual values when LIVE feed is unavailable.
 
 ---
 
