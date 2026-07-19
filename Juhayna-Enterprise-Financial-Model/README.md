@@ -162,28 +162,7 @@ graph TD
 2. Open `Juhayna_v1.0.0_Production.xlsx`.
 3. Enable Editing and explore the Executive Dashboard.
 
----
 
-## 📁 Repository Structure
-
-```text
-Juhayna-Financial-Model/
-│
-├── README.md
-├── LICENSE
-├── images/
-│   ├── 01-Cover.png
-│   ├── 02-Dashboard.png
-│   ├── 03-KPI-Engine.png
-│   ├── 04-Reporting-Layer.png
-│   ├── 05-Scenario-Manager.png
-│   ├── 06-Sensitivity.png
-│   ├── 07-Market-Data-Hub.png
-│   ├── 08-Control-Panel.png
-│   ├── 09-Architecture.png
-│   └── 10-Audit-Trail.png
-└── Juhayna_v1.0.0_Production.xlsx
-```
 
 ---
 
