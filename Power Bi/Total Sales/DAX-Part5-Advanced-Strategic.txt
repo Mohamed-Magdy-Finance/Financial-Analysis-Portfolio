@@ -1,0 +1,71 @@
+DEFINE
+    // ============================================================
+    // PART 5 of 6 — Advanced Strategic Measures (portfolio-level view)
+    // Requires Parts 1-4 already applied
+    // ============================================================
+
+    // --- Target-setting & variance ---
+    MEASURE 'Data'[Target Margin] = 0.37
+
+    MEASURE 'Data'[Variance vs Target] =
+        [Operating Margin %] - [Target Margin]
+
+    MEASURE 'Data'[Profitability Tier] =
+        IF(
+            ISBLANK([Total Sales]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Variance vs Target] >= 0.03, "Outperforming",
+                [Variance vs Target] >= -0.03, "On Target",
+                "Underperforming"
+            )
+        )
+
+    // --- Growth momentum (uses Part 1's MoM % and Rolling Average) ---
+    MEASURE 'Data'[Growth Momentum] =
+        IF(
+            ISBLANK([Total Sales]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Sales MoM %] > 0 && [Total Sales] > [3-Month Rolling Avg Sales], "Accelerating",
+                [Sales MoM %] > 0, "Recovering",
+                [Sales MoM %] <= 0 && [Total Sales] < [3-Month Rolling Avg Sales], "Declining",
+                "Stable"
+            )
+        )
+
+    // --- Portfolio Diversification Score ---
+    MEASURE 'Data'[Portfolio Diversification Score] =
+        VAR RetailerHHI = [Retailer Concentration Index (HHI)]
+        VAR NormalizedRetailer = 100 - DIVIDE(RetailerHHI, 100)
+        RETURN
+            IF(
+                ISBLANK([Total Sales]),
+                BLANK(),
+                MAX(0, MIN(100, NormalizedRetailer))
+            )
+
+    // --- Revenue quality flag: growing AND profitable vs growing but not profitable ---
+    MEASURE 'Data'[Revenue Quality] =
+        IF(
+            ISBLANK([Total Sales]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Sales MoM %] > 0 && [Variance vs Target] >= 0, "High Quality Growth",
+                [Sales MoM %] > 0 && [Variance vs Target] < 0, "Low Quality Growth",
+                [Sales MoM %] <= 0 && [Variance vs Target] >= 0, "Profitable Contraction",
+                "Weak"
+            )
+        )
+
+EVALUATE
+    ROW(
+        "Operating Margin %", [Operating Margin %],
+        "Variance vs Target", [Variance vs Target],
+        "Profitability Tier", [Profitability Tier],
+        "Portfolio Diversification Score", [Portfolio Diversification Score],
+        "Revenue Quality", [Revenue Quality]
+    )

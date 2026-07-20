@@ -1,0 +1,64 @@
+DEFINE
+    // ============================================================
+    // PART 2 of 6 — Geographic Analysis (Region / State / City)
+    // Requires Part 1 already applied (uses [Total Sales], [Operating Margin %])
+    // ============================================================
+
+    MEASURE 'Data'[Region Contribution %] =
+        DIVIDE([Total Sales], CALCULATE([Total Sales], ALL('Data'[Region])))
+
+    MEASURE 'Data'[Region Rank by Sales] =
+        RANKX(ALL('Data'[Region]), [Total Sales], , DESC, DENSE)
+
+    MEASURE 'Data'[Region Rank by Margin] =
+        RANKX(ALL('Data'[Region]), [Operating Margin %], , DESC, DENSE)
+
+    MEASURE 'Data'[Top Region] =
+        CALCULATE(SELECTEDVALUE('Data'[Region]), TOPN(1, ALL('Data'[Region]), [Total Sales], DESC))
+
+    MEASURE 'Data'[Top State] =
+        CALCULATE(SELECTEDVALUE('Data'[State]), TOPN(1, ALL('Data'[State]), [Total Sales], DESC))
+
+    MEASURE 'Data'[Top City] =
+        CALCULATE(SELECTEDVALUE('Data'[City]), TOPN(1, ALL('Data'[City]), [Total Sales], DESC))
+
+    // --- Pareto / ABC classification at City level ---
+    MEASURE 'Data'[City Cumulative Sales %] =
+        VAR CurrentSales = [Total Sales]
+        VAR CitiesRankedHigher =
+            CALCULATE(
+                [Total Sales],
+                FILTER(ALL('Data'[City]), [Total Sales] >= CurrentSales)
+            )
+        RETURN
+            DIVIDE(CitiesRankedHigher, CALCULATE([Total Sales], ALL('Data'[City])))
+
+    MEASURE 'Data'[City ABC Class] =
+        IF(
+            ISBLANK([Total Sales]),
+            BLANK(),
+            IF([City Cumulative Sales %] <= 0.8, "A - Core",
+                IF([City Cumulative Sales %] <= 0.95, "B - Secondary", "C - Long tail")
+            )
+        )
+
+    // --- Volume vs margin positioning per region ---
+    MEASURE 'Data'[Region Volume-Margin Flag] =
+        VAR AvgMargin = CALCULATE([Operating Margin %], ALL('Data'[Region]))
+        VAR AvgSalesPerRegion = DIVIDE(CALCULATE([Total Sales], ALL('Data'[Region])), DISTINCTCOUNT('Data'[Region]))
+        RETURN
+            SWITCH(
+                TRUE(),
+                ISBLANK([Total Sales]), BLANK(),
+                [Total Sales] > AvgSalesPerRegion && [Operating Margin %] < AvgMargin, "High Volume / Low Margin",
+                [Operating Margin %] > AvgMargin, "High Margin / Low Volume",
+                "Balanced"
+            )
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        'Data'[Region],
+        "Total Sales", [Total Sales],
+        "Margin %", [Operating Margin %],
+        "Flag", [Region Volume-Margin Flag]
+    )

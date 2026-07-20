@@ -1,0 +1,50 @@
+DEFINE
+    // ============================================================
+    // PART 4 of 6 — Brand & Pricing Analysis
+    // Requires Part 1 already applied
+    // ============================================================
+
+    MEASURE 'Data'[Brand Contribution %] =
+        DIVIDE([Total Sales], CALCULATE([Total Sales], ALL('Data'[Beverage Brand])))
+
+    MEASURE 'Data'[Brand Rank by Sales] =
+        RANKX(ALL('Data'[Beverage Brand]), [Total Sales], , DESC, DENSE)
+
+    MEASURE 'Data'[Brand Rank by Margin] =
+        RANKX(ALL('Data'[Beverage Brand]), [Operating Margin %], , DESC, DENSE)
+
+    MEASURE 'Data'[Top Brand] =
+        CALCULATE(SELECTEDVALUE('Data'[Beverage Brand]), TOPN(1, ALL('Data'[Beverage Brand]), [Total Sales], DESC))
+
+    // --- Price positioning: is this brand priced above or below the portfolio average? ---
+    MEASURE 'Data'[Price Position Index] =
+        DIVIDE([Average Selling Price], CALCULATE([Average Selling Price], ALL('Data'[Beverage Brand])))
+
+    // --- Simple elasticity proxy: relationship between price tier and volume tier ---
+    MEASURE 'Data'[Brand Elasticity Signal] =
+        VAR PriceIdx = [Price Position Index]
+        VAR TotalOverallUnits = CALCULATE([Total Units Sold], ALL('Data'[Beverage Brand]))
+        VAR VolShare = DIVIDE([Total Units Sold], TotalOverallUnits)
+        VAR AvgVolShare = DIVIDE(1, DISTINCTCOUNT('Data'[Beverage Brand]))
+        RETURN
+            IF(
+                ISBLANK([Total Sales]),
+                BLANK(),
+                SWITCH(
+                    TRUE(),
+                    PriceIdx > 1.1 && VolShare < AvgVolShare, "Premium — Volume Suppressed",
+                    PriceIdx < 0.9 && VolShare > AvgVolShare, "Value — Volume Driven",
+                    "Neutral"
+                )
+            )
+
+    MEASURE 'Data'[Brand Profit Contribution %] =
+        DIVIDE([Total Operating Profit], CALCULATE([Total Operating Profit], ALL('Data'[Beverage Brand])))
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        'Data'[Beverage Brand],
+        "Sales", [Total Sales],
+        "Price Position Index", [Price Position Index],
+        "Elasticity Signal", [Brand Elasticity Signal]
+    )

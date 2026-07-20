@@ -1,0 +1,56 @@
+DEFINE
+    // ============================================================
+    // PART 3 of 6 — Retailer Analysis (concentration risk & performance)
+    // Requires Part 1 already applied
+    // ============================================================
+
+    MEASURE 'Data'[Retailer Contribution %] =
+        DIVIDE([Total Sales], CALCULATE([Total Sales], ALL('Data'[Retailer])))
+
+    // --- Herfindahl-Hirschman Index on retailer revenue ---
+    MEASURE 'Data'[Retailer Concentration Index (HHI)] =
+        VAR TotalOverallSales = CALCULATE([Total Sales], ALL('Data'[Retailer]))
+        RETURN
+            SUMX(
+                ALL('Data'[Retailer]),
+                DIVIDE([Total Sales], TotalOverallSales) ^ 2
+            ) * 10000
+
+    MEASURE 'Data'[Retailer Rank by Sales] =
+        RANKX(ALL('Data'[Retailer]), [Total Sales], , DESC, DENSE)
+
+    MEASURE 'Data'[Retailer Rank by Margin] =
+        RANKX(ALL('Data'[Retailer]), [Operating Margin %], , DESC, DENSE)
+
+    MEASURE 'Data'[Top Retailer] =
+        CALCULATE(SELECTEDVALUE('Data'[Retailer]), TOPN(1, ALL('Data'[Retailer]), [Total Sales], DESC))
+
+    // --- Strategic account tiering ---
+    MEASURE 'Data'[Retailer Tier] =
+        IF(
+            ISBLANK([Total Sales]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Retailer Contribution %] >= 0.30, "Strategic Account",
+                [Retailer Contribution %] >= 0.15, "Core Account",
+                "Secondary Account"
+            )
+        )
+
+    // --- Revenue sitting with retailers whose margin is below average ---
+    MEASURE 'Data'[Retailer Revenue at Risk] =
+        VAR AvgOverallMargin = CALCULATE([Operating Margin %], ALL('Data'[Retailer]))
+        RETURN
+            CALCULATE(
+                [Total Sales],
+                FILTER(ALL('Data'[Retailer]), [Operating Margin %] < AvgOverallMargin)
+            )
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        'Data'[Retailer],
+        "Sales", [Total Sales],
+        "Contribution %", [Retailer Contribution %],
+        "Tier", [Retailer Tier]
+    )

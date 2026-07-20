@@ -1,0 +1,61 @@
+
+    // ============================================================
+    // PART 1 of 6 — Core Financial Measures + Time Intelligence
+    // Model: Star Schema (Fact_Sales + Dim_Date/Retailer/Geography/Brand)
+    // Requires: Dim_Date marked as Date Table (right-click -> Mark as Date Table -> Date column)
+    // ============================================================
+
+   DEFINE
+    MEASURE 'Data'[Total Sales] = SUM('Data'[Total_Sales])
+    MEASURE 'Data'[Total Operating Profit] = SUM('Data'[Operating Profit])
+    MEASURE 'Data'[Operating Margin %] = 
+        DIVIDE([Total Operating Profit], [Total Sales])
+
+    MEASURE 'Data'[Total Units Sold] = SUM('Data'[Units Sold])
+
+    MEASURE 'Data'[Average Selling Price] = 
+        DIVIDE([Total Sales], [Total Units Sold])
+
+    MEASURE 'Data'[Average Sales per Transaction] = 
+        DIVIDE([Total Sales], COUNTROWS('Data'))
+
+    MEASURE 'Data'[Sales MoM %] = 
+        DIVIDE(
+            [Total Sales] - CALCULATE([Total Sales], DATEADD('Data'[Invoice Date], -1, MONTH)),
+            CALCULATE([Total Sales], DATEADD('Data'[Invoice Date], -1, MONTH))
+        )
+
+    MEASURE 'Data'[Profit MoM %] = 
+        DIVIDE(
+            [Total Operating Profit] - CALCULATE([Total Operating Profit], DATEADD('Data'[Invoice Date], -1, MONTH)),
+            CALCULATE([Total Operating Profit], DATEADD('Data'[Invoice Date], -1, MONTH))
+        )
+
+    MEASURE 'Data'[Sales QoQ %] = 
+        DIVIDE(
+            [Total Sales] - CALCULATE([Total Sales], DATEADD('Data'[Invoice Date], -1, QUARTER)),
+            CALCULATE([Total Sales], DATEADD('Data'[Invoice Date], -1, QUARTER))
+        )
+
+    MEASURE 'Data'[Sales YTD] = TOTALYTD([Total Sales], 'Data'[Invoice Date])
+    MEASURE 'Data'[Profit YTD] = TOTALYTD([Total Operating Profit], 'Data'[Invoice Date])
+
+    MEASURE 'Data'[Running Total Sales] = 
+        CALCULATE([Total Sales], FILTER(ALL('Data'[Invoice Date]), 'Data'[Invoice Date] <= MAX('Data'[Invoice Date])))
+
+    MEASURE 'Data'[3-Month Rolling Avg Sales] = 
+        AVERAGEX(
+            DATESINPERIOD('Data'[Invoice Date], LASTDATE('Data'[Invoice Date]), -3, MONTH),
+            [Total Sales]
+        )
+
+    MEASURE 'Data'[Seasonality Index] = 
+        DIVIDE([Total Sales], CALCULATE([Total Sales], ALL('Data')) / 12)
+
+EVALUATE
+    ROW(
+        "Total Sales", [Total Sales],
+        "Operating Margin %", [Operating Margin %],
+        "Sales YTD", [Sales YTD],
+        "Seasonality Index", [Seasonality Index]
+    )

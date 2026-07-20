@@ -1,0 +1,58 @@
+DEFINE
+    // ============================================================
+    // PART 6 of 6 — Dynamic Titles & UI Helper Measures
+    // Requires Parts 1-3 already applied (uses Top Region / Top Retailer / Top Brand)
+    // ============================================================
+
+    MEASURE 'Data'[Last Refresh Date] =
+        "Last updated: " & FORMAT(TODAY(), "dd MMM yyyy")
+
+    MEASURE 'Data'[Dynamic Title] =
+        "Sales Overview — " &
+        SELECTEDVALUE('Data'[Region], "All Regions") &
+        IF(ISFILTERED('Data'[Beverage Brand]), " | " & SELECTEDVALUE('Data'[Beverage Brand], "Multiple Brands"), "")
+
+    MEASURE 'Data'[Dynamic Subtitle] =
+        VAR CurrentRows = COUNTROWS('Data')
+        VAR TotalRows = CALCULATE(COUNTROWS('Data'), ALL('Data'))
+        RETURN
+            "Showing " & FORMAT(CurrentRows, "#,##0") & " of " &
+            FORMAT(TotalRows, "#,##0") & " transactions"
+
+    // --- Dynamic Period Label based on Invoice Date ---
+    // Safely detects selected month, year, or custom date ranges without needing a separate Dim_Date table
+    MEASURE 'Data'[Selected Period Label] =
+        VAR MinDate = MIN('Data'[Invoice Date])
+        VAR MaxDate = MAX('Data'[Invoice Date])
+        RETURN
+            IF(
+                ISBLANK(MinDate),
+                "No Data Selected",
+                IF(
+                    FORMAT(MinDate, "mmmm yyyy") == FORMAT(MaxDate, "mmmm yyyy"),
+                    FORMAT(MinDate, "MMMM yyyy"),
+                    IF(
+                        YEAR(MinDate) == YEAR(MaxDate) && DATEDIFF(MinDate, MaxDate, MONTH) >= 11,
+                        "Full Year " & FORMAT(MaxDate, "yyyy"),
+                        FORMAT(MinDate, "mmm yyyy") & " — " & FORMAT(MaxDate, "mmm yyyy")
+                    )
+                )
+            )
+
+    // --- One-line auto-generated headline for cover/overview pages ---
+    MEASURE 'Data'[Executive Headline] =
+        IF(
+            ISBLANK([Total Sales]),
+            "No sales recorded for this selection",
+            "Top region: " & COALESCE([Top Region], "N/A") & 
+            " | Top brand: " & COALESCE([Top Brand], "N/A") & 
+            " | Top retailer: " & COALESCE([Top Retailer], "N/A")
+        )
+
+EVALUATE
+    ROW(
+        "Dynamic Title", [Dynamic Title],
+        "Dynamic Subtitle", [Dynamic Subtitle],
+        "Selected Period Label", [Selected Period Label],
+        "Executive Headline", [Executive Headline]
+    )
