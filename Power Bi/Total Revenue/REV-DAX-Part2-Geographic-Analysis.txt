@@ -1,0 +1,57 @@
+DEFINE
+    // ============================================================
+    // REVENUE FILE — PART 2 of 6 — Geographic Analysis (Region / State)
+    // Table: 'Data'
+    // ============================================================
+
+    MEASURE 'Data'[Region Contribution %] =
+        DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL('Data'[Region])))
+
+    MEASURE 'Data'[Region Rank by Revenue] =
+        RANKX(ALL('Data'[Region]), [Total Revenue], , DESC, DENSE)
+
+    MEASURE 'Data'[Region Rank by Margin] =
+        RANKX(ALL('Data'[Region]), [Profit Margin %], , DESC, DENSE)
+
+    MEASURE 'Data'[Top Region] =
+        CALCULATE(SELECTEDVALUE('Data'[Region]), TOPN(1, ALL('Data'[Region]), [Total Revenue], DESC))
+
+    MEASURE 'Data'[Top State] =
+        CALCULATE(SELECTEDVALUE('Data'[State]), TOPN(1, ALL('Data'[State]), [Total Revenue], DESC))
+
+    // --- Pareto / ABC classification at State level ---
+    MEASURE 'Data'[State Cumulative Revenue %] =
+        VAR CurrentRevenue = [Total Revenue]
+        VAR StatesRankedHigher =
+            CALCULATE(
+                [Total Revenue],
+                FILTER(ALL('Data'[State]), [Total Revenue] >= CurrentRevenue)
+            )
+        RETURN
+            DIVIDE(StatesRankedHigher, CALCULATE([Total Revenue], ALL('Data'[State])))
+
+    MEASURE 'Data'[State ABC Class] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            IF(
+                [State Cumulative Revenue %] <= 0.8, "A - Core",
+                IF([State Cumulative Revenue %] <= 0.95, "B - Secondary", "C - Long tail")
+            )
+        )
+
+    // --- Region Margin Spread vs Portfolio ---
+    MEASURE 'Data'[Region Margin Spread vs Portfolio] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            [Profit Margin %] - CALCULATE([Profit Margin %], ALL('Data'[Region]))
+        )
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        'Data'[Region],
+        "Revenue", [Total Revenue],
+        "Margin %", [Profit Margin %],
+        "Margin Spread", [Region Margin Spread vs Portfolio]
+    )

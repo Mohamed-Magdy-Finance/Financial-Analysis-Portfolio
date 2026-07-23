@@ -1,0 +1,80 @@
+DEFINE
+    // ============================================================
+    // REVENUE FILE — PART 5 of 6 — Advanced Strategic Measures
+    // Table: 'Data'
+    // Requires Parts 1-4 already applied
+    // ============================================================
+
+    MEASURE 'Data'[Target Margin] = 0.79
+        // Target set at portfolio standard (~79%)
+
+    MEASURE 'Data'[Variance vs Target] =
+        [Profit Margin %] - [Target Margin]
+
+    MEASURE 'Data'[Profitability Tier] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Variance vs Target] >= 0.01, "Outperforming",
+                [Variance vs Target] >= -0.01, "On Target",
+                "Underperforming"
+            )
+        )
+
+    MEASURE 'Data'[Growth Momentum] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Revenue MoM %] > 0 && [Total Revenue] > [3-Month Rolling Avg Revenue], "Accelerating",
+                [Revenue MoM %] > 0, "Recovering",
+                [Revenue MoM %] <= 0 && [Total Revenue] < [3-Month Rolling Avg Revenue], "Declining",
+                "Stable"
+            )
+        )
+
+    // --- Portfolio Diversification Score (0-100) ---
+    // Uses Retailer HHI calculated in Part 3 (~3,789) -> Resulting score is ~62.11/100
+    MEASURE 'Data'[Portfolio Diversification Score] =
+        VAR RetailerHHI = [Retailer Concentration Index (HHI)]
+        VAR NormalizedRetailer = 100 - DIVIDE(RetailerHHI, 100)
+        RETURN
+            MAX(0, MIN(100, NormalizedRetailer))
+
+    // --- Revenue Quality ---
+    MEASURE 'Data'[Revenue Quality] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Revenue MoM %] > 0 && [Variance vs Target] >= 0, "High Quality Growth",
+                [Revenue MoM %] > 0 && [Variance vs Target] < 0, "Low Quality Growth",
+                [Revenue MoM %] <= 0 && [Variance vs Target] >= 0, "Profitable Contraction",
+                "Weak"
+            )
+        )
+
+    // --- Expense Efficiency Trend ---
+    // Positive value = Expenses grow faster than Revenue (Early warning sign of margin erosion)
+    MEASURE 'Data'[Expense Growth vs Revenue Growth] =
+        VAR PrevExpenses = CALCULATE([Total Expenses], DATEADD('Data'[Date], -1, MONTH))
+        VAR ExpenseMoM = DIVIDE([Total Expenses] - PrevExpenses, PrevExpenses)
+        RETURN
+            IF(
+                ISBLANK([Total Revenue]) || ISBLANK(PrevExpenses),
+                BLANK(),
+                ExpenseMoM - [Revenue MoM %]
+            )
+
+EVALUATE
+    ROW(
+        "Profit Margin %", [Profit Margin %],
+        "Variance vs Target", [Variance vs Target],
+        "Profitability Tier", [Profitability Tier],
+        "Portfolio Diversification Score", [Portfolio Diversification Score],
+        "Revenue Quality", [Revenue Quality]
+    )

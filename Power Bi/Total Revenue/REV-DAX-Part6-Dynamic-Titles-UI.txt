@@ -1,0 +1,55 @@
+DEFINE
+    // ============================================================
+    // REVENUE FILE — PART 6 of 6 — Dynamic Titles & UI Helper Measures
+    // Table: 'Data'
+    // Requires Parts 1-5 already applied
+    // ============================================================
+
+    MEASURE 'Data'[Last Refresh Date] =
+        "Last updated: " & FORMAT(TODAY(), "dd mmm yyyy")
+
+    MEASURE 'Data'[Dynamic Title] =
+        "Revenue Overview — " &
+        SELECTEDVALUE('Data'[Region], "All Regions") &
+        IF(
+            ISFILTERED('Data'[Beverage Brand]),
+            " | " & SELECTEDVALUE('Data'[Beverage Brand], ""),
+            ""
+        )
+
+    MEASURE 'Data'[Dynamic Subtitle] =
+        "Showing " & FORMAT(COUNTROWS('Data'), "#,##0") & " of " &
+        FORMAT(CALCULATE(COUNTROWS('Data'), ALL('Data')), "#,##0") &
+        " transactions"
+
+    MEASURE 'Data'[Selected Period Label] =
+        IF(
+            ISFILTERED('Data'[Date]),
+            FORMAT(MIN('Data'[Date]), "MMM yyyy") & " - " & FORMAT(MAX('Data'[Date]), "MMM yyyy"),
+            "Full Year " & FORMAT(MAX('Data'[Date]), "yyyy")
+        )
+
+    MEASURE 'Data'[Executive Headline] =
+        "Top region: " & [Top Region] &
+        " | Top brand: " & [Top Brand by Revenue] &
+        " | Top retailer: " & [Top Retailer]
+
+    // --- Risk-focused headline for executive summary ---
+    // Calculates Top Retailer share explicitly to display accurate concentration % (e.g. 53% from Sodapop)
+    MEASURE 'Data'[Risk Headline] =
+        VAR TopRetailerShare =
+            CALCULATE(
+                [Retailer Contribution %],
+                TOPN(1, ALL('Data'[Retailer]), [Total Revenue], DESC)
+            )
+        RETURN
+            "Concentration risk: " & FORMAT(TopRetailerShare, "0%") & " of revenue from " & [Top Retailer]
+
+EVALUATE
+    ROW(
+        "Dynamic Title", [Dynamic Title],
+        "Dynamic Subtitle", [Dynamic Subtitle],
+        "Selected Period Label", [Selected Period Label],
+        "Executive Headline", [Executive Headline],
+        "Risk Headline", [Risk Headline]
+    )

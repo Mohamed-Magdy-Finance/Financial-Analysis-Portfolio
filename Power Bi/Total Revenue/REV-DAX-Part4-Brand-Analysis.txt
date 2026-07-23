@@ -1,0 +1,59 @@
+DEFINE
+    // ============================================================
+    // REVENUE FILE — PART 4 of 6 — Brand & Pricing Analysis
+    // Table: 'Data'
+    // Requires Part 1 already applied
+    // ============================================================
+
+    MEASURE 'Data'[Brand Contribution %] =
+        DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL('Data'[Beverage Brand])))
+
+    MEASURE 'Data'[Brand Profit Contribution %] =
+        DIVIDE([Profit], CALCULATE([Profit], ALL('Data'[Beverage Brand])))
+
+    MEASURE 'Data'[Brand Rank by Revenue] =
+        RANKX(ALL('Data'[Beverage Brand]), [Total Revenue], , DESC, DENSE)
+
+    MEASURE 'Data'[Brand Rank by Margin] =
+        RANKX(ALL('Data'[Beverage Brand]), [Profit Margin %], , DESC, DENSE)
+
+    MEASURE 'Data'[Top Brand by Revenue] =
+        CALCULATE(SELECTEDVALUE('Data'[Beverage Brand]), TOPN(1, ALL('Data'[Beverage Brand]), [Total Revenue], DESC))
+
+    MEASURE 'Data'[Top Brand by Margin] =
+        CALCULATE(SELECTEDVALUE('Data'[Beverage Brand]), TOPN(1, ALL('Data'[Beverage Brand]), [Profit Margin %], DESC))
+
+    // --- Price positioning ---
+    // 1.00 = Priced at portfolio average. >1.10 = Premium, <0.90 = Value.
+    MEASURE 'Data'[Price Position Index] =
+        DIVIDE([Average Selling Price], CALCULATE([Average Selling Price], ALL('Data'[Beverage Brand])))
+
+    // --- Brand Elasticity Signal ---
+    MEASURE 'Data'[Brand Elasticity Signal] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            VAR PriceIdx = [Price Position Index]
+            VAR VolShare = DIVIDE([Total Units Sold], CALCULATE([Total Units Sold], ALL('Data'[Beverage Brand])))
+            VAR AvgVolShare = DIVIDE(1, DISTINCTCOUNT('Data'[Beverage Brand]))
+            RETURN
+                SWITCH(
+                    TRUE(),
+                    PriceIdx > 1.10 && VolShare < AvgVolShare, "Premium — Volume Suppressed",
+                    PriceIdx < 0.90 && VolShare > AvgVolShare, "Value — Volume Driven",
+                    "Neutral"
+                )
+        )
+
+    // --- Brand Cost Efficiency ---
+    MEASURE 'Data'[Brand Cost Ratio %] =
+        DIVIDE([Total Expenses], [Total Revenue])
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        'Data'[Beverage Brand],
+        "Revenue", [Total Revenue],
+        "Margin %", [Profit Margin %],
+        "Price Position Index", [Price Position Index],
+        "Elasticity Signal", [Brand Elasticity Signal]
+    )

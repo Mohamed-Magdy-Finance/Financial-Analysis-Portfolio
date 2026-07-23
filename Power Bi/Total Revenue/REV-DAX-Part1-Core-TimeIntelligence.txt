@@ -1,0 +1,70 @@
+DEFINE
+    // ============================================================
+    // REVENUE FILE — PART 1 of 6 — Core Financial Measures + Time Intelligence
+    // Table: 'Data'
+    // ============================================================
+
+    MEASURE 'Data'[Total Revenue] = SUM('Data'[Revenue])
+    MEASURE 'Data'[Total Expenses] = SUM('Data'[Expenses])
+
+    MEASURE 'Data'[Profit] = [Total Revenue] - [Total Expenses]
+
+    MEASURE 'Data'[Profit Margin %] =
+        DIVIDE([Profit], [Total Revenue])
+
+    MEASURE 'Data'[Total Units Sold] = SUM('Data'[Units Sold])
+
+    MEASURE 'Data'[Average Selling Price] =
+        DIVIDE([Total Revenue], [Total Units Sold])
+
+    MEASURE 'Data'[Average Revenue per Transaction] =
+        DIVIDE([Total Revenue], COUNTROWS('Data'))
+
+    MEASURE 'Data'[Cost Ratio %] =
+        DIVIDE([Total Expenses], [Total Revenue])
+
+    // --- Time Intelligence ---
+    MEASURE 'Data'[Revenue MoM %] =
+        VAR PrevRevenue = CALCULATE([Total Revenue], DATEADD('Data'[Date], -1, MONTH))
+        RETURN
+            DIVIDE([Total Revenue] - PrevRevenue, PrevRevenue)
+
+    MEASURE 'Data'[Profit MoM %] =
+        VAR PrevProfit = CALCULATE([Profit], DATEADD('Data'[Date], -1, MONTH))
+        RETURN
+            DIVIDE([Profit] - PrevProfit, PrevProfit)
+
+    MEASURE 'Data'[Revenue QoQ %] =
+        VAR PrevQtrRevenue = CALCULATE([Total Revenue], DATEADD('Data'[Date], -1, QUARTER))
+        RETURN
+            DIVIDE([Total Revenue] - PrevQtrRevenue, PrevQtrRevenue)
+
+    MEASURE 'Data'[Revenue YTD] = TOTALYTD([Total Revenue], 'Data'[Date])
+    MEASURE 'Data'[Profit YTD] = TOTALYTD([Profit], 'Data'[Date])
+
+    MEASURE 'Data'[Running Total Revenue] =
+        CALCULATE(
+            [Total Revenue],
+            FILTER(ALL('Data'[Date]), 'Data'[Date] <= MAX('Data'[Date]))
+        )
+
+    MEASURE 'Data'[3-Month Rolling Avg Revenue] =
+        AVERAGEX(
+            DATESINPERIOD('Data'[Date], LASTDATE('Data'[Date]), -3, MONTH),
+            [Total Revenue]
+        )
+
+    MEASURE 'Data'[Seasonality Index] =
+        VAR AvgMonthlyRevenue = DIVIDE(CALCULATE([Total Revenue], ALL('Data')), 12)
+        RETURN
+            DIVIDE([Total Revenue], AvgMonthlyRevenue)
+
+EVALUATE
+    ROW(
+        "Total Revenue", [Total Revenue],
+        "Total Expenses", [Total Expenses],
+        "Profit", [Profit],
+        "Profit Margin %", [Profit Margin %],
+        "Revenue YTD", [Revenue YTD],
+        "Seasonality Index", [Seasonality Index]
+    )

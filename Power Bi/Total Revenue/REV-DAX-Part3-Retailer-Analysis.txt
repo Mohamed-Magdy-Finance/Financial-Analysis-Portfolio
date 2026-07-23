@@ -1,0 +1,59 @@
+DEFINE
+    // ============================================================
+    // REVENUE FILE — PART 3 of 6 — Retailer Analysis (Concentration Risk & Performance)
+    // Table: 'Data'
+    // Requires Part 1 already applied (uses [Total Revenue], [Profit Margin %])
+    // ============================================================
+
+    MEASURE 'Data'[Retailer Contribution %] =
+        DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL('Data'[Retailer])))
+
+    // --- Herfindahl-Hirschman Index on retailer revenue ---
+    // HHI > 2500 indicates high customer concentration risk.
+    // In our dataset, HHI reaches ~3,789 due to Sodapop driving over 53% of revenue.
+    MEASURE 'Data'[Retailer Concentration Index (HHI)] =
+        VAR TotalOverallRevenue = CALCULATE([Total Revenue], ALL('Data'[Retailer]))
+        RETURN
+            SUMX(
+                ALL('Data'[Retailer]),
+                DIVIDE([Total Revenue], TotalOverallRevenue) ^ 2
+            ) * 10000
+
+    MEASURE 'Data'[Retailer Rank by Revenue] =
+        RANKX(ALL('Data'[Retailer]), [Total Revenue], , DESC, DENSE)
+
+    MEASURE 'Data'[Retailer Rank by Margin] =
+        RANKX(ALL('Data'[Retailer]), [Profit Margin %], , DESC, DENSE)
+
+    MEASURE 'Data'[Top Retailer] =
+        CALCULATE(SELECTEDVALUE('Data'[Retailer]), TOPN(1, ALL('Data'[Retailer]), [Total Revenue], DESC))
+
+    // --- Strategic account tiering ---
+    MEASURE 'Data'[Retailer Tier] =
+        IF(
+            ISBLANK([Total Revenue]),
+            BLANK(),
+            SWITCH(
+                TRUE(),
+                [Retailer Contribution %] >= 0.30, "Strategic Account",
+                [Retailer Contribution %] >= 0.15, "Core Account",
+                "Secondary Account"
+            )
+        )
+
+    // --- Revenue sitting with retailers whose margin is below average ---
+    MEASURE 'Data'[Retailer Revenue at Risk] =
+        VAR AvgOverallMargin = CALCULATE([Profit Margin %], ALL('Data'[Retailer]))
+        RETURN
+            CALCULATE(
+                [Total Revenue],
+                FILTER(ALL('Data'[Retailer]), [Profit Margin %] < AvgOverallMargin)
+            )
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        'Data'[Retailer],
+        "Revenue", [Total Revenue],
+        "Contribution %", [Retailer Contribution %],
+        "Tier", [Retailer Tier]
+    )
