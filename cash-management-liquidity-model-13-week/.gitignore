@@ -1,0 +1,187 @@
+# ============================================================
+
+# 13-Week Cash Management & Liquidity Model
+
+# Git Ignore Rules
+
+# ============================================================
+
+# ------------------------------------------------------------
+
+# Excel Temporary & Lock Files
+
+# ------------------------------------------------------------
+
+~$*.xlsx
+~$*.xls
+~$*.xlsm
+~$*.xltx
+~$*.xltm
+*.tmp
+*.temp
+
+# Excel Auto-Recovery / Temporary Files
+
+*.xlk
+*.bak
+
+# ------------------------------------------------------------
+
+# OS / System Files
+
+# ------------------------------------------------------------
+
+.DS_Store
+.DS_Store?
+Thumbs.db
+Thumbs.db:encryptable
+desktop.ini
+ehthumbs.db
+
+# ------------------------------------------------------------
+
+# Editor / IDE Files
+
+# ------------------------------------------------------------
+
+.vscode/
+.idea/
+*.code-workspace
+
+# Vim / Emacs / Sublime temporary files
+
+*.swp
+*.swo
+*~
+.sublime-workspace
+.sublime-project
+
+# ------------------------------------------------------------
+
+# Python
+
+# ------------------------------------------------------------
+
+**pycache**/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environments
+
+.venv/
+venv/
+env/
+ENV/
+
+# Python tooling / test / coverage
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Jupyter Notebook
+
+.ipynb_checkpoints/
+
+# ------------------------------------------------------------
+
+# Generated Analysis / Temporary Output
+
+# ------------------------------------------------------------
+
+output/
+outputs/
+temp/
+tmp/
+cache/
+.cache/
+
+# Generated CSV / intermediate analysis files
+
+*.csv.tmp
+*.json.tmp
+
+# ------------------------------------------------------------
+
+# Logs
+
+# ------------------------------------------------------------
+
+*.log
+
+# ------------------------------------------------------------
+
+# Backup / Autosave Files
+
+# ------------------------------------------------------------
+
+*.orig
+*.old
+*.backup
+*.swp
+
+# ------------------------------------------------------------
+
+# Operating System / File Explorer Metadata
+
+# ------------------------------------------------------------
+
+$RECYCLE.BIN/
+.Spotlight-V100
+.Trashes
+
+# ------------------------------------------------------------
+
+# Local Configuration / Secrets
+
+# ------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+# ------------------------------------------------------------
+
+# Generated ZIP / Archive Files
+
+# ------------------------------------------------------------
+
+# Uncomment if you do NOT want to track local ZIP packages
+
+# *.zip
+
+# ------------------------------------------------------------
+
+# Project-Specific Technical Files
+
+# ------------------------------------------------------------
+
+**tracelight_scratchpad***
+*.scratch
+*.scratchpad
+
+# ------------------------------------------------------------
+
+# Local Documentation / Drafts
+
+# ------------------------------------------------------------
+
+*.draft
+*.local
+
+# ------------------------------------------------------------
+
+# Miscellaneous
+
+# ------------------------------------------------------------
+
+*.pid
+*.seed
+.DS_Store
+desktop.ini
+Thumbs.db
